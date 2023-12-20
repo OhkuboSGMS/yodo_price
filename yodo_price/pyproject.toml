@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "yodo_price"
+version = "0.1.0"
+description = ""
+authors = ["OhkuboSGMS <ginger.os777146th@gmail.com>"]
+readme = "README.md"
+packages = [{include = "yodo_price"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+beautifulsoup4 = "^4.12.2"
+more-itertools = "^10.1.0"
+requests = "^2.31.0"
+sqlmodel = "^0.0.14"
+google-cloud-storage = "^2.14.0"
+discord-py = "^2.3.2"
+python-dotenv = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
