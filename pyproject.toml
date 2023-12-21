@@ -15,6 +15,7 @@ sqlmodel = "^0.0.14"
 google-cloud-storage = "^2.14.0"
 discord-py = "^2.3.2"
 python-dotenv = "^1.0.0"
+apscheduler = "^3.10.4"
 
 
 [build-system]

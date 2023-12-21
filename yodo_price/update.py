@@ -4,7 +4,7 @@ from typing import List, Tuple
 from sqlmodel import Session, select
 
 from yodo_price.get import get_product
-from yodo_price.model import Product, Price
+from yodo_price.model import Product, Price, Url
 
 
 def update(url_list: List[str], session: Session) -> List[Tuple[str, Product, Price]]:
@@ -22,3 +22,9 @@ def update(url_list: List[str], session: Session) -> List[Tuple[str, Product, Pr
         session.add(price)
         result.append((url, product, price))
     return result
+
+
+def add_url(url: str, session: Session):
+    _url = Url(url=url)
+    session.add(_url)
+    session.commit()

@@ -1,0 +1,13 @@
+[Unit]
+Description = Yodo Price Discord Bot Daemon
+
+[Install]
+WantedBy = multi-user.target
+
+[Service]
+WorkingDirectory= /home/pi/bin/yodo_price
+ExecStart=/home/pi/bin/yodo_price/venv/bin/python3 /home/pi/bin/yodo_price/bot.py
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+
