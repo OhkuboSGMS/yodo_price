@@ -52,7 +52,7 @@ async def backup_db():
 async def schedule():
     scheduler = AsyncIOScheduler()
     scheduler.add_job(main, "cron", hour="0,12", minute="0")
-    scheduler.add_job(backup_db, "cron", day_of_week="sun", hour=23, minute=59)
+    scheduler.add_job(backup_db, "cron", hour=23, minute=59)
     scheduler.start()
     print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
 
