@@ -8,6 +8,9 @@ from yodo_price.model import Product, Price, Url
 
 
 def update(url_list: List[str], session: Session) -> List[Tuple[str, Product, Price]]:
+    """
+    commitはしない
+    """
     result = []
     for url in url_list:
         data = get_product(url)
