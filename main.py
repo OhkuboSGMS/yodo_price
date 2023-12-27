@@ -69,7 +69,8 @@ if __name__ == '__main__':
     try:
         load_dotenv()
         loop = asyncio.get_event_loop()
-        # loop.run_until_complete(main())
+        # 起動時に取得処理を一度実行
+        loop.run_until_complete(main())
         loop.run_until_complete(schedule())
     except (KeyboardInterrupt, SystemExit):
         pass
