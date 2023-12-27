@@ -44,7 +44,7 @@ async def main():
                                        },
                                       os.environ["DISCORD_WEBHOOK_URL"])
 
-    session.commit()
+        session.commit()
 
 
 async def backup_db():
