@@ -41,7 +41,7 @@ async def add(ctx, url: str):
 
 
 @bot.command()
-async def list(ctx, url: str):
+async def list(ctx):
     try:
         with Session(engine) as session:
             products: list[Product] = session.exec(select(Product).order_by(Product.id)).all()
