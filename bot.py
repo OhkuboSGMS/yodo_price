@@ -40,8 +40,8 @@ async def add(ctx, url: str):
     await ctx.send(f"{url} を登録しました")
 
 
-@bot.command()
-async def list(ctx):
+@bot.command(name="list")
+async def _list(ctx):
     try:
         with Session(engine) as session:
             products: list[Product] = session.exec(select(Product).order_by(Product.id)).all()
