@@ -10,6 +10,7 @@ from yodo_price import update
 from yodo_price.model import Url
 from yodo_price.notify import discord_webhook
 from yodo_price.upload import upload_gcp
+from yodo_price.query import get_last_price
 
 """
 https://www.crummy.com/software/BeautifulSoup/bs4/doc/#
@@ -29,17 +30,21 @@ async def main():
     with Session(engine) as session:
         url_list = session.exec(select(Url)).all()
         url_list = [u.url for u in url_list]
+        # 商品ページから取得(DBへのデータのコミットはまだ行なっていない)
         result = update.update(url_list, session)
 
         for url, product, price in result:
             message = f"商品名: {product.name}\n価格:{price.price:,}円\n確認日時:{price.date}\n{url}"
             print(message)
-            await discord_webhook({"username": "ヨドボット",
-                                   "content": message
-                                   },
-                                  os.environ["DISCORD_WEBHOOK_URL"])
+            last_price = get_last_price(session, product)
+            # 安くなった場合のみ通知する
+            if price.price < last_price:
+                await discord_webhook({"username": "ヨドボット",
+                                       "content": message
+                                       },
+                                      os.environ["DISCORD_WEBHOOK_URL"])
 
-    session.commit()
+        session.commit()
 
 
 async def backup_db():
@@ -52,7 +57,7 @@ async def backup_db():
 async def schedule():
     scheduler = AsyncIOScheduler()
     scheduler.add_job(main, "cron", hour="0,12", minute="0")
-    scheduler.add_job(backup_db, "cron", day_of_week="sun", hour=23, minute=59)
+    scheduler.add_job(backup_db, "cron", hour=23, minute=59)
     scheduler.start()
     print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
 
@@ -64,7 +69,8 @@ if __name__ == '__main__':
     try:
         load_dotenv()
         loop = asyncio.get_event_loop()
-        # loop.run_until_complete(main())
+        # 起動時に取得処理を一度実行
+        loop.run_until_complete(main())
         loop.run_until_complete(schedule())
     except (KeyboardInterrupt, SystemExit):
         pass
