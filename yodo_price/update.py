@@ -28,3 +28,5 @@ def add_url(url: str, session: Session):
     _url = Url(url=url)
     session.add(_url)
     session.commit()
+    session.refresh(_url)
+    return _url

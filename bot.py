@@ -4,6 +4,8 @@ import discord
 from discord.ext import commands
 from sqlalchemy import create_engine
 from sqlmodel import SQLModel, Session, select
+
+from yodo_price import update
 from yodo_price.get import get_product
 from yodo_price.model import Product
 from yodo_price.update import add_url
@@ -32,12 +34,13 @@ async def add(ctx, url: str):
     try:
         with Session(engine) as session:
             _ = get_product(url)
-            add_url(url, session)
+            url_model = add_url(url, session)
+            _, product, price = update.update([url_model], session)[0]
     except Exception as e:
         print(e)
         await ctx.send(f"add failed:{e}")
         return
-    await ctx.send(f"{url} を登録しました")
+    await ctx.send(f"{url} を登録しました\n 商品名: {product.name}\n価格:{price.price:,}円")
 
 
 @bot.command(name="list")
