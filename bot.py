@@ -38,7 +38,8 @@ async def add(ctx, url: str):
         with Session(engine) as session:
             _ = get_product(url)
             url_model = add_url(url, session)
-            _, product, price = update.update([url_model], session)[0]
+            url_list = [url_model.url]
+            _, product, price = update.update(url_list, session)[0]
     except Exception as e:
         logger.exception(e)
         await ctx.send(f"add failed:{e}")
