@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["OhkuboSGMS <ginger.os777146th@gmail.com>"]
 readme = "README.md"
-packages = [{include = "yodo_price"}]
+packages = [{ include = "yodo_price" }]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -17,11 +17,14 @@ discord-py = "^2.3.2"
 python-dotenv = "^1.0.0"
 apscheduler = "^3.10.4"
 fire = "^0.5.0"
+loguru = "^0.7.2"
 
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
 
+[tool.poetry.scripts]
+yodo = "yodo_price.cli:main"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
