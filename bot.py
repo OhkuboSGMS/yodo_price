@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 import discord
 from discord.ext import commands
@@ -10,7 +11,7 @@ from sqlmodel import SQLModel, Session, select
 
 from yodo_price import update
 from yodo_price.get import get_product
-from yodo_price.model import Product, Url
+from yodo_price.model import Product, Url, Price
 from yodo_price.update import add_url
 
 load_dotenv()
@@ -66,6 +67,19 @@ async def _list(ctx):
         await ctx.send(f"list failed:{e}")
         return
     await ctx.send("登録済み商品一覧\n" + "\n".join(product_msgs))
+
+
+@bot.command(name="log")
+async def _log(ctx, n: Optional[int] = 10):
+    try:
+        with Session(engine) as session:
+            prices = session.exec(select(Price).order_by(Price.date).limit(n)).all()
+            msgs = list(map(lambda p: f"{p.date}:{p.price}:{p.product.name}", prices))
+            await ctx.send("直近価格\n" + "\n".join(msgs))
+    except Exception as e:
+        logger.exception(e)
+        await ctx.send(f"log:{e}")
+        return
 
 
 bot.run(os.environ["DISCORD_BOT_TOKEN"])
