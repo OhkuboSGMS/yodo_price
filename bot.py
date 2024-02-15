@@ -2,6 +2,7 @@ import os
 
 import discord
 from discord.ext import commands
+from discord.ext.commands import Context
 from dotenv import load_dotenv
 from loguru import logger
 from sqlalchemy import create_engine
@@ -32,8 +33,11 @@ async def on_ready():
 
 
 @bot.command()
-async def add(ctx, url: str):
+async def add(ctx: Context, url: str):
     """Adds two numbers together."""
+    if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(os.environ["DISCORD_CHANNEL_ID"]):
+        await ctx.send(f"このチャンネルでは使用できません")
+        return
     try:
         with Session(engine) as session:
             _ = get_product(url)
@@ -49,6 +53,9 @@ async def add(ctx, url: str):
 
 @bot.command(name="list")
 async def _list(ctx):
+    if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(os.environ["DISCORD_CHANNEL_ID"]):
+        await ctx.send(f"このチャンネルでは使用できません")
+        return
     try:
         with Session(engine) as session:
             products: list[tuple[Product, Url]] \
