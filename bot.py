@@ -73,7 +73,7 @@ async def _list(ctx):
 async def _log(ctx, n: Optional[int] = 10):
     try:
         with Session(engine) as session:
-            prices = session.exec(select(Price).order_by(Price.date).limit(n)).all()
+            prices = session.exec(select(Price).order_by(Price.date.desc()).limit(n)).all()
             msgs = list(map(lambda p: f"{p.date}:{p.price}:{p.product.name}", prices))
             await ctx.send("直近価格\n" + "\n".join(msgs))
     except Exception as e:
