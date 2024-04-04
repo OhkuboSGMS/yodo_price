@@ -1,12 +1,11 @@
 import os
 
 import fire
-from sqlalchemy import create_engine
-from sqlmodel import SQLModel, Session, select
 from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlmodel import SQLModel, Session
 
 from yodo_price import update
-from yodo_price.model import Url
 
 
 def get(url: str):
@@ -20,6 +19,10 @@ def get(url: str):
     session.commit()
 
 
-if __name__ == '__main__':
+def main():
     load_dotenv()
-    fire.Fire()
+    fire.Fire(get)
+
+
+if __name__ == '__main__':
+    main()
