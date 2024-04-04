@@ -1,6 +1,9 @@
+from urllib.parse import urlparse
+
 from bs4 import BeautifulSoup
 from more_itertools import first
-from urllib.parse import urlparse
+
+from yodo_price.constants import PriceType
 
 
 def get_product_id(url: str) -> str:
@@ -19,12 +22,22 @@ def get_product_image(soup: BeautifulSoup) -> str:
 
 def get_product_price(soup: BeautifulSoup) -> int:
     price = first(soup.find_all("span", class_="productPrice"), None)
-    if not price:
+    if price:
+        price_with_yen = price.text
+        # ￥と,を削除
+        price_without_yen = price_with_yen.replace("￥", "").replace(",", "")
+        return int(price_without_yen)
+
+    # 価格が取得できなかった場合、販売が終了している可能性がある
+    sale_info = first(soup.find_all("div", class_="salesInfo"), None)
+    sale_info = sale_info.text if sale_info else None
+
+    if sale_info is None:
         raise Exception("価格が取得できませんでした")
-    price_with_yen = price.text
-    # ￥と,を削除
-    price_without_yen = price_with_yen.replace("￥", "").replace(",", "")
-    return int(price_without_yen)
+    if sale_info == "販売を終了しました":
+        return PriceType.END
+
+    raise Exception("価格が取得できませんでした")
 
 
 def get_product_name(soup: BeautifulSoup):
