@@ -11,6 +11,7 @@ from yodo_price.model import Url
 from yodo_price.notify import discord_webhook
 from yodo_price.upload import upload_gcp
 from yodo_price.query import get_last_price
+from yodo_price.check import is_price_lower
 
 """
 https://www.crummy.com/software/BeautifulSoup/bs4/doc/#
@@ -36,9 +37,8 @@ async def main():
         for url, product, price in result:
             message = f"商品名: {product.name}\n価格:{price.price:,}円\n確認日時:{price.date}\n{url}"
             print(message)
-            last_price = get_last_price(session, product)
             # 安くなった場合のみ通知する
-            if price.price < last_price:
+            if is_price_lower(session, product, price.price):
                 await discord_webhook({"username": "ヨドボット",
                                        "content": message
                                        },
