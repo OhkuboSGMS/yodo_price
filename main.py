@@ -10,7 +10,7 @@ from yodo_price import update
 from yodo_price.check import is_price_lower
 from yodo_price.model import Url
 from yodo_price.notify import discord_webhook
-from yodo_price.query import get_products_latest_price
+from yodo_price.query import get_products_latest_price, get_last_price
 from yodo_price.upload import upload_gcp
 
 """
@@ -45,6 +45,8 @@ async def main():
             print(message)
             # 安くなった場合のみ通知する
             if is_price_lower(session, product, price):
+                latest_price = get_last_price(session, product)
+                message = f"価格低下を観測:これまで:{latest_price},現在:{price}"
                 print("安くなりました！")
                 await discord_webhook({"username": "ヨドボット",
                                        "content": message
