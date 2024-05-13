@@ -7,10 +7,11 @@ from dotenv import load_dotenv
 from sqlmodel import SQLModel, create_engine, Session, select
 
 from yodo_price import update
+from yodo_price.check import is_price_lower
 from yodo_price.model import Url
 from yodo_price.notify import discord_webhook
+from yodo_price.query import get_products_latest_price
 from yodo_price.upload import upload_gcp
-from yodo_price.query import get_last_price
 
 """
 https://www.crummy.com/software/BeautifulSoup/bs4/doc/#
@@ -30,15 +31,21 @@ async def main():
     with Session(engine) as session:
         url_list = session.exec(select(Url)).all()
         url_list = [u.url for u in url_list]
-        # 商品ページから取得(DBへのデータのコミットはまだ行なっていない)
-        result = update.update(url_list, session)
-
-        for url, product, price in result:
-            message = f"商品名: {product.name}\n価格:{price.price:,}円\n確認日時:{price.date}\n{url}"
+        # 直近の値段を取得
+        result = get_products_latest_price(session)
+        # 商品ページから最新化価格を取得しコミット
+        update.update(url_list, session)
+        for product, latest_price in result:
+            if latest_price is None:
+                price = None
+                message = f"商品名: {product.name}\n価格:未取得\n確認日時:未取得"
+            else:
+                message = f"商品名: {product.name}\n価格:{latest_price.price:,}円\n確認日時:{latest_price.date}"
+                price = latest_price.price
             print(message)
-            last_price = get_last_price(session, product)
             # 安くなった場合のみ通知する
-            if price.price < last_price:
+            if is_price_lower(session, product, price):
+                print("安くなりました！")
                 await discord_webhook({"username": "ヨドボット",
                                        "content": message
                                        },

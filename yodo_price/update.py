@@ -9,13 +9,14 @@ from yodo_price.model import Product, Price, Url
 
 def update(url_list: List[str], session: Session) -> List[Tuple[str, Product, Price]]:
     """
-    commitはしない
+    最新情報をDBに追加
     """
     result = []
     for url in url_list:
         data = get_product(url)
         statement = select(Product).where(Product.product_id == data["product_id"])
         product = session.exec(statement).one_or_none()
+        # 初登録の場合はcommitする
         if not product:
             product = Product(name=data["name"], image=data["img_url"], product_id=data["product_id"])
             session.add(product)
@@ -24,6 +25,7 @@ def update(url_list: List[str], session: Session) -> List[Tuple[str, Product, Pr
         price = Price(date=datetime.now(), price=data["price"], product=product)
         session.add(price)
         result.append((url, product, price))
+    session.commit()
     return result
 
 
