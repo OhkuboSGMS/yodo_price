@@ -38,15 +38,12 @@ async def main():
         for product, latest_price in result:
             if latest_price is None:
                 price = None
-                message = f"商品名: {product.name}\n価格:未取得\n確認日時:未取得"
             else:
-                message = f"商品名: {product.name}\n価格:{latest_price.price:,}円\n確認日時:{latest_price.date}"
                 price = latest_price.price
-            print(message)
             # 安くなった場合のみ通知する
             if is_price_lower(session, product, price):
                 latest_price = get_last_price(session, product)
-                message = f"価格低下を観測:これまで:{latest_price},現在:{price}"
+                message = f"価格低下を観測:商品名: {product.name}\nこれまで:{latest_price:,}円,現在:{price:,}円"
                 print("安くなりました！")
                 await discord_webhook({"username": "ヨドボット",
                                        "content": message
