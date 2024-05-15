@@ -88,7 +88,7 @@ async def _log(ctx: Interaction, n: Optional[int] = 10):
 async def latest_price(ctx: Interaction):
     try:
         with Session(engine) as session:
-            result = query.get_products_latest_price(session)
+            result = query.get_latest_price(session)
             await ctx.response.send_message("最新価格\n" + "\n".join(map(str, result)))
     except Exception as e:
         logger.exception(e)

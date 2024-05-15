@@ -16,7 +16,7 @@ join latest_price on product.id = latest_price.product_id;
 """)
 
 
-def get_products_latest_price(session: Session) -> Tuple[LatestPrice]:
+def get_latest_price(session: Session) -> Tuple[LatestPrice]:
     result = session.exec(latest_price_query).all()
     return tuple(map(LatestPrice.from_orm, result))
 

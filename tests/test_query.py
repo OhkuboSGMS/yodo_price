@@ -12,3 +12,4 @@ def test_latest_price_query(session):
     assert result[0].price == 500
     assert result[1].name == "炊飯器"
     assert result[1].price == 3000
+    "\n".join(map(str, result))
