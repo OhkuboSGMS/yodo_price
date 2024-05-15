@@ -24,3 +24,11 @@ class Product(SQLModel, table=True):
     image: str
     product_id: str = Field(index=True)
     price_history: List[Price] = Relationship(back_populates="product")
+
+
+class LatestPrice(SQLModel, table=False):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    url: str
+    name: str
+    price: int
+    date: datetime
