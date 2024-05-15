@@ -1,0 +1,8 @@
+[Unit]
+Description=Git Pull Service
+
+[Service]
+Type=simple
+WorkingDirectory=XXX
+ExecStart=/usr/bin/git pull
+
