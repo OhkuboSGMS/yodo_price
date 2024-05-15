@@ -24,8 +24,9 @@ def update(url_list: List[str], session: Session) -> List[Tuple[str, Product, Pr
             session.refresh(product)
         price = Price(date=datetime.now(), price=data["price"], product=product)
         session.add(price)
+        session.commit()
+        session.refresh(price)
         result.append((url, product, price))
-    session.commit()
     return result
 
 
