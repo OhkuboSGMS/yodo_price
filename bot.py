@@ -89,7 +89,7 @@ async def latest_price(ctx: Interaction):
     try:
         with Session(engine) as session:
             result = query.get_latest_price(session)
-            await ctx.response.send_message("最新価格\n" + "\n".join(map(str, result)))
+            await ctx.response.send_message("最新価格\n" + "\n".join(map(lambda x: x.format(), result)))
     except Exception as e:
         logger.exception(e)
         await ctx.response.send_message(f"latest_price:{e}")

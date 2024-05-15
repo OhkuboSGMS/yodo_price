@@ -28,7 +28,10 @@ class Product(SQLModel, table=True):
 
 class LatestPrice(SQLModel, table=False):
     id: Optional[int] = Field(default=None, primary_key=True)
-    url: str
+    product_id: str
     name: str
     price: int
     date: datetime
+
+    def format(self) -> str:
+        return f"取得日: {self.date.strftime('%Y-%m-%d %H:%M:%S')}| 商品名: {self.name} | 価格: {self.price:,}円"

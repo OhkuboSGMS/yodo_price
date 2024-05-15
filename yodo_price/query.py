@@ -10,8 +10,7 @@ with latest_price as(
     from Price
     group by product_id
 )
-select url.id,url.url,product.name,latest_price.price,latest_price.date from url
-join product on url.id = product.id
+select Product.id,Product.product_id,product.name,latest_price.price,latest_price.date from Product
 join latest_price on product.id = latest_price.product_id;
 """)
 
