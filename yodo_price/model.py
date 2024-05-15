@@ -34,4 +34,4 @@ class LatestPrice(SQLModel, table=False):
     date: datetime
 
     def format(self) -> str:
-        return f"取得日: {self.date.strftime('%Y-%m-%d %H:%M:%S')}| 商品名: {self.name} | 価格: {self.price:,}円"
+        return f"{self.id} | 取得日: {self.date.strftime('%Y-%m-%d %H:%M:%S')}| 価格: {self.price:,}円 | 商品名: {self.name}"
