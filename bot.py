@@ -39,17 +39,17 @@ async def add(ctx: Context, url: str):
     if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(os.environ["DISCORD_CHANNEL_ID"]):
         await ctx.send(f"このチャンネルでは使用できません")
         return
-    try:
-        with Session(engine) as session:
+    with Session(engine) as session:
+        try:
             _ = get_product(url)
             url_model = add_url(url, session)
             url_list = [url_model.url]
             _, product, price = update.update(url_list, session)[0]
-    except Exception as e:
-        logger.exception(e)
-        await ctx.send(f"add failed:{e}")
-        return
-    await ctx.send(f"{url} を登録しました\n 商品名: {product.name}\n価格:{price.price:,}円")
+        except Exception as e:
+            logger.exception(e)
+            await ctx.send(f"add failed:{e}")
+            return
+        await ctx.send(f"{url} を登録しました\n 商品名: {product.name}\n価格:{price.price:,}円")
 
 
 @bot.command(name="list")
