@@ -73,13 +73,21 @@ async def _list(ctx: Interaction):
 
 @bot.tree.command(name="yodo_log_price")
 async def _log(ctx: Interaction, n: Optional[int] = 10, id: Optional[int] = None):
+    """
+    直近の価格を取得
+    :param ctx:
+    :param n:
+    :param id:
+    :return:
+    """
     try:
         with Session(engine) as session:
             if id:
-                prices = session.exec(select(Price).where(Price.product_id == id).order_by(Price.date.desc()).limit(n)).all()
+                prices = session.exec(
+                    select(Price).where(Price.product_id == id).order_by(Price.date.desc()).limit(n)).all()
             else:
                 prices = session.exec(select(Price).order_by(Price.date.desc()).limit(n)).all()
-            msgs = list(map(lambda p: f"{p.date}:{p.price}:{p.product.name}", prices))
+            msgs = list(map(lambda p: p.format(), prices))
             await ctx.response.send_message("直近価格\n" + "\n".join(msgs))
     except Exception as e:
         logger.exception(e)

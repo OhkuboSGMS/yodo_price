@@ -17,6 +17,9 @@ class Price(SQLModel, table=True):
     product_id: Optional[int] = Field(default=None, foreign_key="product.id")
     product: Optional["Product"] = Relationship(back_populates="price_history")
 
+    def format(self) -> str:
+        return f"{self.id} | 取得日: {self.date.strftime('%Y-%m-%d %H:%M:%S')}| 価格: {self.price:,}円 | 商品名: {self.product.name}"
+
 
 class Product(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
