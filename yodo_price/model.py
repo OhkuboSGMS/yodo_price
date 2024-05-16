@@ -3,6 +3,8 @@ from typing import Optional, List
 
 from sqlmodel import SQLModel, Field, Relationship
 
+from yodo_price.constants import format_price
+
 
 class Url(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -18,7 +20,7 @@ class Price(SQLModel, table=True):
     product: Optional["Product"] = Relationship(back_populates="price_history")
 
     def format(self) -> str:
-        return f"{self.id} | 取得日: {self.date.strftime('%Y-%m-%d %H:%M:%S')}| 価格: {self.price:,}円 | 商品名: {self.product.name}"
+        return f"{self.id} | 取得日: {self.date.strftime('%Y-%m-%d %H:%M:%S')}| 価格: {format_price(self.price)} | 商品名: {self.product.name}"
 
 
 class Product(SQLModel, table=True):
