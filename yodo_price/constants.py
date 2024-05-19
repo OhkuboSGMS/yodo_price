@@ -1,5 +1,7 @@
 from enum import IntEnum
 
+BASE_URL = "https://www.yodobashi.com/product/"
+
 
 class PriceType(IntEnum):
     # 販売終了
