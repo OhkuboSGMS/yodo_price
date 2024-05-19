@@ -35,16 +35,17 @@ async def main():
         result = get_products_latest_price(session)
         # 商品ページから最新化価格を取得しコミット
         update.update(url_list, session)
-        for product, latest_price in result:
-            if latest_price is None:
+        for product, last_price in result:
+            if last_price is None:
                 price = None
             else:
-                price = latest_price.price
+                price = last_price.price
             # 安くなった場合のみ通知する
             if is_price_lower(session, product, price):
+                # 最新価格
                 latest_price = get_last_price(session, product)
-                message = f"価格低下を観測:商品名: {product.name}\nこれまで:{latest_price:,}円,現在:{price:,}円"
-                print("安くなりました！")
+                # price -> 直近価格
+                message = f"価格低下を観測:商品名: {product.name}\nこれまで:{price:,}円,現在:{latest_price:,}円"
                 await discord_webhook({"username": "ヨドボット",
                                        "content": message
                                        },
