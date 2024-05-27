@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 from sqlmodel import SQLModel, create_engine, Session, select
 
 from yodo_price import update
-from yodo_price.check import is_price_lower
-from yodo_price.model import Url
+from yodo_price.check import is_price_change
+from yodo_price.model import Url, get_product_url
 from yodo_price.notify import discord_webhook
 from yodo_price.query import get_products_latest_price, get_last_price
 from yodo_price.upload import upload_gcp
@@ -41,11 +41,11 @@ async def main():
             else:
                 price = last_price.price
             # 安くなった場合のみ通知する
-            if is_price_lower(session, product, price):
+            if is_price_change(session, product, price):
                 # 最新価格
                 latest_price = get_last_price(session, product)
                 # price -> 直近価格
-                message = f"価格低下を観測:商品名: {product.name}\nこれまで:{price:,}円,現在:{latest_price:,}円"
+                message = f"価格変化を検知:ID:{product.product_id} 商品名: {product.name}\nこれまで:{price:,}円,現在:{latest_price:,}円|[link]({get_product_url(product.product_id)})"
                 await discord_webhook(
                     {"username": "ヨドボット", "content": message},
                     os.environ["DISCORD_WEBHOOK_URL"],
@@ -63,7 +63,7 @@ async def backup_db():
 
 async def schedule():
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(main, "cron", hour="0,12", minute="0")
+    scheduler.add_job(main, "cron", hour="0,6,12,18", minute="0")
     scheduler.add_job(backup_db, "cron", hour=23, minute=59)
     scheduler.start()
     print("Press Ctrl+{0} to exit".format("Break" if os.name == "nt" else "C"))
