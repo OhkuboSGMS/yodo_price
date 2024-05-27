@@ -4,7 +4,6 @@ from typing import Optional
 import discord
 from discord import Interaction
 from discord.ext import commands
-from discord.ext.commands import Context
 from dotenv import load_dotenv
 from loguru import logger
 from sqlalchemy import create_engine
@@ -21,7 +20,7 @@ intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='/', intents=intents)
+bot = commands.Bot(command_prefix="/", intents=intents)
 engine = create_engine(f"sqlite:///{os.environ['DB_NAME']}")
 SQLModel.metadata.create_all(engine)
 
@@ -30,16 +29,18 @@ logger.add("yodo_price_bot.log", rotation="1 day", retention="7 days")
 
 @bot.event
 async def on_ready():
-    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+    print(f"Logged in as {bot.user} (ID: {bot.user.id})")
     await bot.tree.sync()
-    print('------')
+    print("------")
 
 
 @bot.tree.command(name="yodo_add", description="監視するURLを追加")
 async def add(ctx: Interaction, url: str):
     """Adds two numbers together."""
-    if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(os.environ["DISCORD_CHANNEL_ID"]):
-        await ctx.response.send_message(f"このチャンネルでは使用できません")
+    if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(
+        os.environ["DISCORD_CHANNEL_ID"]
+    ):
+        await ctx.response.send_message("このチャンネルでは使用できません")
         return
     with Session(engine) as session:
         try:
@@ -51,18 +52,23 @@ async def add(ctx: Interaction, url: str):
             logger.exception(e)
             await ctx.response.send_message(f"add failed:{e}")
             return
-        await ctx.response.send_message(f"{url} を登録しました\n 商品名: {product.name}\n価格:{price.price:,}円")
+        await ctx.response.send_message(
+            f"{url} を登録しました\n 商品名: {product.name}\n価格:{price.price:,}円"
+        )
 
 
 @bot.tree.command(name="yodo_list", description="登録済み商品一覧")
 async def _list(ctx: Interaction):
-    if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(os.environ["DISCORD_CHANNEL_ID"]):
-        await ctx.response.send_message(f"このチャンネルでは使用できません")
+    if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(
+        os.environ["DISCORD_CHANNEL_ID"]
+    ):
+        await ctx.response.send_message("このチャンネルでは使用できません")
         return
     try:
         with Session(engine) as session:
-            products: list[tuple[Product, Url]] \
-                = session.exec(select(Product, Url).where(Product.id == Url.id).order_by(Product.id)).all()
+            products: list[tuple[Product, Url]] = session.exec(
+                select(Product, Url).where(Product.id == Url.id).order_by(Product.id)
+            ).all()
             product_msgs = list(map(lambda p: f"{p[0].name}:{p[1].url}", products))
     except Exception as e:
         logger.exception(e)
@@ -84,9 +90,15 @@ async def _log(ctx: Interaction, n: Optional[int] = 10, id: Optional[int] = None
         with Session(engine) as session:
             if id:
                 prices = session.exec(
-                    select(Price).where(Price.product_id == id).order_by(Price.date.desc()).limit(n)).all()
+                    select(Price)
+                    .where(Price.product_id == id)
+                    .order_by(Price.date.desc())
+                    .limit(n)
+                ).all()
             else:
-                prices = session.exec(select(Price).order_by(Price.date.desc()).limit(n)).all()
+                prices = session.exec(
+                    select(Price).order_by(Price.date.desc()).limit(n)
+                ).all()
             msgs = list(map(lambda p: p.format(), prices))
             await ctx.response.send_message("直近価格\n" + "\n".join(msgs))
     except Exception as e:
@@ -100,7 +112,9 @@ async def latest_price(ctx: Interaction):
     try:
         with Session(engine) as session:
             result = query.get_latest_price(session)
-            await ctx.response.send_message("最新価格\n" + "\n".join(map(lambda x: x.format(), result)))
+            await ctx.response.send_message(
+                "最新価格\n" + "\n".join(map(lambda x: x.format(), result))
+            )
     except Exception as e:
         logger.exception(e)
         await ctx.response.send_message(f"latest_price:{e}")

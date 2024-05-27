@@ -1,9 +1,11 @@
+from datetime import datetime
 from datetime import timedelta
 
 import pytest
 from sqlalchemy import create_engine, StaticPool
-from sqlmodel import SQLModel, Session
-from yodo_price.model import *
+from sqlmodel import Session, SQLModel
+
+from yodo_price.model import Price, Product, Url
 
 
 def _add_test_data(session: Session):
@@ -22,24 +24,16 @@ def _add_test_data(session: Session):
     session.refresh(product_B)
 
     now = datetime.now()
-    prices_A = [Price(date=now - timedelta(seconds=30),
-                      price=300,
-                      product=product_A),
-                Price(date=now - timedelta(seconds=20),
-                      price=400,
-                      product=product_A),
-                Price(date=now - timedelta(seconds=10),
-                      price=500,
-                      product=product_A),
-                ]
+    prices_A = [
+        Price(date=now - timedelta(seconds=30), price=300, product=product_A),
+        Price(date=now - timedelta(seconds=20), price=400, product=product_A),
+        Price(date=now - timedelta(seconds=10), price=500, product=product_A),
+    ]
     session.add_all(prices_A)
-    prices_B = [Price(date=now - timedelta(seconds=30),
-                      price=4000,
-                      product=product_B),
-                Price(date=now - timedelta(seconds=20),
-                      price=3000,
-                      product=product_B),
-                ]
+    prices_B = [
+        Price(date=now - timedelta(seconds=30), price=4000, product=product_B),
+        Price(date=now - timedelta(seconds=20), price=3000, product=product_B),
+    ]
     session.add_all(prices_B)
     session.commit()
 
