@@ -4,7 +4,6 @@ from typing import Optional
 import discord
 from discord import Interaction
 from discord.ext import commands
-from discord.ext.commands import Context
 from dotenv import load_dotenv
 from loguru import logger
 from sqlalchemy import create_engine
@@ -41,7 +40,7 @@ async def add(ctx: Interaction, url: str):
     if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(
         os.environ["DISCORD_CHANNEL_ID"]
     ):
-        await ctx.response.send_message(f"このチャンネルでは使用できません")
+        await ctx.response.send_message("このチャンネルでは使用できません")
         return
     with Session(engine) as session:
         try:
@@ -63,7 +62,7 @@ async def _list(ctx: Interaction):
     if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(
         os.environ["DISCORD_CHANNEL_ID"]
     ):
-        await ctx.response.send_message(f"このチャンネルでは使用できません")
+        await ctx.response.send_message("このチャンネルでは使用できません")
         return
     try:
         with Session(engine) as session:

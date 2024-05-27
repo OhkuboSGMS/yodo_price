@@ -1,8 +1,6 @@
-import pytest
 from sqlmodel import select
 
-from yodo_price.model import Product, Price
-from more_itertools import first
+from yodo_price.model import Product
 from yodo_price.query import get_last_price
 
 

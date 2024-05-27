@@ -1,9 +1,11 @@
+from datetime import datetime
 from datetime import timedelta
 
 import pytest
 from sqlalchemy import create_engine, StaticPool
-from sqlmodel import SQLModel, Session
-from yodo_price.model import *
+from sqlmodel import Session, SQLModel
+
+from yodo_price.model import Price, Product, Url
 
 
 def _add_test_data(session: Session):
