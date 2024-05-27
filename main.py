@@ -46,10 +46,10 @@ async def main():
                 latest_price = get_last_price(session, product)
                 # price -> 直近価格
                 message = f"価格低下を観測:商品名: {product.name}\nこれまで:{price:,}円,現在:{latest_price:,}円"
-                await discord_webhook({"username": "ヨドボット",
-                                       "content": message
-                                       },
-                                      os.environ["DISCORD_WEBHOOK_URL"])
+                await discord_webhook(
+                    {"username": "ヨドボット", "content": message},
+                    os.environ["DISCORD_WEBHOOK_URL"],
+                )
 
         session.commit()
 
@@ -66,13 +66,13 @@ async def schedule():
     scheduler.add_job(main, "cron", hour="0,12", minute="0")
     scheduler.add_job(backup_db, "cron", hour=23, minute=59)
     scheduler.start()
-    print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
+    print("Press Ctrl+{0} to exit".format("Break" if os.name == "nt" else "C"))
 
     while True:
         await asyncio.sleep(1000)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         load_dotenv()
         loop = asyncio.get_event_loop()

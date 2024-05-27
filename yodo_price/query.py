@@ -24,7 +24,12 @@ def get_last_price(session: Session, product: Product) -> int:
     """
     DB内の最新の値段を取得する
     """
-    statement = select(Price).where(Price.product_id == product.id).order_by(Price.date.desc()).limit(1)
+    statement = (
+        select(Price)
+        .where(Price.product_id == product.id)
+        .order_by(Price.date.desc())
+        .limit(1)
+    )
     last_price = session.exec(statement).one_or_none()
     if last_price:
         return last_price.price
@@ -32,14 +37,21 @@ def get_last_price(session: Session, product: Product) -> int:
         return 0
 
 
-def get_products_latest_price(session: Session) -> List[Tuple[Product, Optional[Price]]]:
+def get_products_latest_price(
+    session: Session,
+) -> List[Tuple[Product, Optional[Price]]]:
     """
     DB内の最新の値段を取得する,UrlとProductを結合し、Priceをgroup byして最新の値段を取得する
     """
     products = session.exec(select(Product)).all()
     results = []
     for product in products:
-        statement = select(Price).where(Price.product_id == product.id).order_by(Price.date.desc()).limit(1)
+        statement = (
+            select(Price)
+            .where(Price.product_id == product.id)
+            .order_by(Price.date.desc())
+            .limit(1)
+        )
         last_price = session.exec(statement).one_or_none()
         if last_price:
             results.append((product, last_price))

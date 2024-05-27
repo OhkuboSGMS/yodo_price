@@ -18,7 +18,9 @@ def update(url_list: List[str], session: Session) -> List[Tuple[str, Product, Pr
         product = session.exec(statement).one_or_none()
         # 初登録の場合はcommitする
         if not product:
-            product = Product(name=data["name"], image=data["img_url"], product_id=data["product_id"])
+            product = Product(
+                name=data["name"], image=data["img_url"], product_id=data["product_id"]
+            )
             session.add(product)
             session.commit()
             session.refresh(product)

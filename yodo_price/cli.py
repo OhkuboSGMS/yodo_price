@@ -20,6 +20,6 @@ def get(url: str):
     session.commit()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     load_dotenv()
     fire.Fire()

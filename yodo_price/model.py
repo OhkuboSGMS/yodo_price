@@ -31,8 +31,10 @@ class Price(SQLModel, table=True):
     product: Optional["Product"] = Relationship(back_populates="price_history")
 
     def format(self) -> str:
-        return (f"{self.id} | 取得日: {self.date.strftime('%Y-%m-%d %H:%M:%S')}| 価格: {format_price(self.price)} |"
-                f" 商品名: {get_short_product_name(self.product.name)} |[link]({get_product_url(self.product_id)})")
+        return (
+            f"{self.id} | 取得日: {self.date.strftime('%Y-%m-%d %H:%M:%S')}| 価格: {format_price(self.price)} |"
+            f" 商品名: {get_short_product_name(self.product.name)} |[link]({get_product_url(self.product_id)})"
+        )
 
 
 class Product(SQLModel, table=True):
@@ -51,5 +53,7 @@ class LatestPrice(SQLModel, table=False):
     date: datetime
 
     def format(self) -> str:
-        return (f"{self.id} | 取得日: {self.date.strftime('%Y-%m-%d %H:%M:%S')}| 価格: {format_price(self.price)} |"
-                f" 商品名: {get_short_product_name(self.name)} |[link]({get_product_url(self.product_id)})")
+        return (
+            f"{self.id} | 取得日: {self.date.strftime('%Y-%m-%d %H:%M:%S')}| 価格: {format_price(self.price)} |"
+            f" 商品名: {get_short_product_name(self.name)} |[link]({get_product_url(self.product_id)})"
+        )
