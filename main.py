@@ -13,6 +13,7 @@ from yodo_price.model import Url, get_product_url
 from yodo_price.notify import discord_webhook
 from yodo_price.query import get_products_latest_price, get_last_price
 from yodo_price.upload import upload_gcp
+from yodo_price.error import notify_discord_on_exception
 
 """
 https://www.crummy.com/software/BeautifulSoup/bs4/doc/#
@@ -20,6 +21,7 @@ https://zenn.dev/shimakaze_soft/articles/6e5e47851459f5
 """
 
 
+@notify_discord_on_exception("ヨドボットエラー", "DISCORD_WEBHOOK_URL")
 async def main():
     engine = create_engine(f"sqlite:///{os.environ['DB_NAME']}")
     SQLModel.metadata.create_all(engine)
