@@ -1,6 +1,7 @@
 import asyncio
 import os
 from datetime import datetime
+from typing import Optional
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
@@ -37,15 +38,16 @@ async def main():
         update.update(url_list, session)
         for product, last_price in result:
             if last_price is None:
-                price = None
+                price: Optional[int] = None
             else:
-                price = last_price.price
+                price: int = last_price.price
+
             # 安くなった場合のみ通知する
             if is_price_change(session, product, price):
                 # 最新価格
                 latest_price = get_last_price(session, product)
                 # price -> 直近価格
-                message = f"価格変化を検知:ID:{price.product_id} 商品名: {product.name}\nこれまで:{price:,}円,現在:{latest_price:,}円|[link]({get_product_url(product.product_id)})"
+                message = f"価格変化を検知:ID:{product.id} 商品名: {product.name}\nこれまで:{price:,}円,現在:{latest_price:,}円|[link]({get_product_url(product.product_id)})"
                 await discord_webhook(
                     {"username": "ヨドボット", "content": message},
                     os.environ["DISCORD_WEBHOOK_URL"],
