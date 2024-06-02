@@ -1,5 +1,6 @@
 import functools
 import os
+from typing import Awaitable, Callable, Any
 
 from yodo_price.notify import discord_webhook
 
@@ -13,7 +14,7 @@ def notify_discord_on_exception(user_name: str, env_var_key: str):
     :return:
     """
 
-    def decorator(func):
+    def decorator(func: Callable[..., Awaitable[Any]]):
         @functools.wraps(func)
         async def wrapper(*args, **kwargs):
             webhook_url = os.getenv(env_var_key)
@@ -23,12 +24,12 @@ def notify_discord_on_exception(user_name: str, env_var_key: str):
                 )
 
             try:
-                return func(*args, **kwargs)
+                return await func(*args, **kwargs)
             except Exception as e:
                 message = f"Exception occurred in {func.__name__}: {e}"
                 payload = {"username": user_name, "content": message}
                 try:
-                    discord_webhook(payload, webhook_url)
+                    await discord_webhook(payload, webhook_url)
                 except Exception as req_e:
                     print(f"Failed to send notification to Discord: {req_e}")
                 raise  # Re-raise the original exception after notification
