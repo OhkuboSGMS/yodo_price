@@ -1,9 +1,9 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import List, Optional, Sequence
 
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import Field, Relationship, SQLModel
 
-from yodo_price.constants import format_price, BASE_URL
+from yodo_price.constants import BASE_URL, format_price
 
 
 def get_short_product_name(product_name: Optional[int]):
@@ -33,7 +33,23 @@ class Price(SQLModel, table=True):
     def format(self) -> str:
         return (
             f"{self.id} | 取得日: {self.date.strftime('%Y-%m-%d %H:%M:%S')}| 価格: {format_price(self.price)} |"
-            f" 商品名: {get_short_product_name(self.product.name)} |[link]({get_product_url(self.product_id)})"
+            f" 商品名: {get_short_product_name(self.product.name)} | [link]({get_product_url(self.product_id)})"
+        )
+
+    @classmethod
+    def simple_list_format(cls, prices: Sequence["Price"]) -> str:
+        if len(prices) == 0:
+            return "価格情報なし"
+        header = f"商品名: {get_short_product_name(prices[0].product.name)} | [link]({get_product_url(prices[0].product_id)})"
+        return (
+            header
+            + "\n"
+            + "\n".join(
+                map(
+                    lambda p: f"{p.date.strftime('%Y-%m-%d %H:%M:%S')}|{format_price(p.price)}",
+                    prices,
+                )
+            )
         )
 
 

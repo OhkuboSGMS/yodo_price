@@ -7,11 +7,11 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from loguru import logger
 from sqlalchemy import create_engine
-from sqlmodel import SQLModel, Session, select
-from yodo_price import query
-from yodo_price import update
+from sqlmodel import Session, SQLModel, select
+
+from yodo_price import query, update
 from yodo_price.get import get_product
-from yodo_price.model import Product, Url, Price
+from yodo_price.model import Price, Product, Url
 from yodo_price.update import add_url
 
 load_dotenv()
@@ -95,12 +95,15 @@ async def _log(ctx: Interaction, n: Optional[int] = 10, id: Optional[int] = None
                     .order_by(Price.date.desc())
                     .limit(n)
                 ).all()
+                await ctx.response.send_message(
+                    "直近価格\n" + Price.simple_list_format(prices)
+                )
             else:
                 prices = session.exec(
                     select(Price).order_by(Price.date.desc()).limit(n)
                 ).all()
-            msgs = list(map(lambda p: p.format(), prices))
-            await ctx.response.send_message("直近価格\n" + "\n".join(msgs))
+                msgs = list(map(lambda p: p.format(), prices))
+                await ctx.response.send_message("直近価格\n" + "\n".join(msgs))
     except Exception as e:
         logger.exception(e)
         await ctx.response.send_message(f"log:{e}")
