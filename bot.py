@@ -9,7 +9,7 @@ from loguru import logger
 from sqlalchemy import create_engine
 from sqlmodel import Session, SQLModel, select
 
-from yodo_price import query, update
+from yodo_price import query, update, filters
 from yodo_price.get import get_product
 from yodo_price.model import Price, Product, Url
 from yodo_price.update import add_url
@@ -38,7 +38,7 @@ async def on_ready():
 async def add(ctx: Interaction, url: str):
     """Adds two numbers together."""
     if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(
-        os.environ["DISCORD_CHANNEL_ID"]
+            os.environ["DISCORD_CHANNEL_ID"]
     ):
         await ctx.response.send_message("このチャンネルでは使用できません")
         return
@@ -60,7 +60,7 @@ async def add(ctx: Interaction, url: str):
 @bot.tree.command(name="yodo_list", description="登録済み商品一覧")
 async def _list(ctx: Interaction):
     if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(
-        os.environ["DISCORD_CHANNEL_ID"]
+            os.environ["DISCORD_CHANNEL_ID"]
     ):
         await ctx.response.send_message("このチャンネルでは使用できません")
         return
@@ -78,7 +78,8 @@ async def _list(ctx: Interaction):
 
 
 @bot.tree.command(name="yodo_log_price")
-async def _log(ctx: Interaction, n: Optional[int] = 10, id: Optional[int] = None):
+async def _log(ctx: Interaction, n: Optional[int] = 10, id: Optional[int] = None,
+               display_mode: str = "normal"):
     """
     直近の価格を取得
     :param ctx:
@@ -95,6 +96,9 @@ async def _log(ctx: Interaction, n: Optional[int] = 10, id: Optional[int] = None
                     .order_by(Price.date.desc())
                     .limit(n)
                 ).all()
+
+                if display_mode == "diff":
+                    prices = filters.unique_consecutive(prices, "price")
                 await ctx.response.send_message(
                     "直近価格\n" + Price.simple_list_format(prices)
                 )
