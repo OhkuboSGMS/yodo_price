@@ -37,7 +37,13 @@ async def main():
         # 直近の値段を取得
         result = get_products_latest_price(session)
         # 商品ページから最新化価格を取得しコミット
-        update.update(url_list, session)
+        _, errors = update.update(url_list, session)
+        if errors:
+            for error in errors:
+                await discord_webhook(
+                    {"username": "ヨドボット", "content": f"エラーが発生しました:{error}"},
+                    os.environ["DISCORD_WEBHOOK_URL"]
+                )
         for product, last_price in result:
             if last_price is None:
                 price: Optional[int] = None

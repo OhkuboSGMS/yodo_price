@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, Sequence
 
 import discord
 from discord import Interaction
@@ -47,7 +47,10 @@ async def add(ctx: Interaction, url: str):
             _ = get_product(url)
             url_model = add_url(url, session)
             url_list = [url_model.url]
-            _, product, price = update.update(url_list, session)[0]
+            (_, product, price), error = update.update(url_list, session)[0]
+            if error:
+                await ctx.response.send_message(f"add failed:{error}")
+                return
         except Exception as e:
             logger.exception(e)
             await ctx.response.send_message(f"add failed:{e}")
@@ -66,7 +69,7 @@ async def _list(ctx: Interaction):
         return
     try:
         with Session(engine) as session:
-            products: list[tuple[Product, Url]] = session.exec(
+            products: Sequence[tuple[Product, Url]] = session.exec(
                 select(Product, Url).where(Product.id == Url.id).order_by(Product.id)
             ).all()
             product_msgs = list(map(lambda p: f"{p[0].name}:{p[1].url}", products))

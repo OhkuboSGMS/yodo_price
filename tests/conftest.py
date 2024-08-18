@@ -47,3 +47,8 @@ def session_fixture():
     with Session(engine) as session:
         _add_test_data(session)
         yield session
+
+
+@pytest.fixture()
+def example_product_button_battery():
+    return "https://www.yodobashi.com/product/100000001000193273/"

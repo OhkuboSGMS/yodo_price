@@ -12,7 +12,10 @@ def get(url: str):
     engine = create_engine(f"sqlite:///{os.environ['DB_NAME']}")
     SQLModel.metadata.create_all(engine)
     with Session(engine) as session:
-        url, product, price = update.update([url], session)[0]
+        (url, product, price), error = update.update([url], session)[0]
+        if error:
+            print(f"add failed:{error}")
+            return
         message = f"商品名: {product.name}\n価格:{price.price:,}円\n確認日時:{price.date}\n{url}"
         print(message)
 
