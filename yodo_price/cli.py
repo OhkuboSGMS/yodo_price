@@ -12,7 +12,8 @@ def get(url: str):
     engine = create_engine(f"sqlite:///{os.environ['DB_NAME']}")
     SQLModel.metadata.create_all(engine)
     with Session(engine) as session:
-        (url, product, price), error = update.update([url], session)[0]
+        results, errors = update.update([url], session)
+        (url, product, price), error = results[0], errors[0]
         if error:
             print(f"add failed:{error}")
             return

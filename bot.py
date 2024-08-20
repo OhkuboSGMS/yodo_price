@@ -47,7 +47,8 @@ async def add(ctx: Interaction, url: str):
             _ = get_product(url)
             url_model = add_url(url, session)
             url_list = [url_model.url]
-            (_, product, price), error = update.update(url_list, session)[0]
+            results, errors = update.update(url_list, session)
+            (_, product, price), error = results[0], errors[0]
             if error:
                 await ctx.response.send_message(f"add failed:{error}")
                 return
