@@ -37,6 +37,7 @@ async def on_ready():
 @bot.tree.command(name="yodo_add", description="監視するURLを追加")
 async def add(ctx: Interaction, url: str):
     """Adds two numbers together."""
+    await ctx.response.defer()
     if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(
             os.environ["DISCORD_CHANNEL_ID"]
     ):
@@ -50,13 +51,13 @@ async def add(ctx: Interaction, url: str):
             results, errors = update.update(url_list, session)
             _, product, price = results[0]
             if len(errors) > 0:
-                await ctx.response.send_message(f"add failed:{errors}")
+                await ctx.followup.send(f"add failed:{errors}")
                 return
         except Exception as e:
             logger.exception(e)
-            await ctx.response.send_message(f"add failed:{e}")
+            await ctx.followup.send(f"add failed:{e}")
             return
-        await ctx.response.send_message(
+        await ctx.followup.send(
             f"{url} を登録しました\n 商品名: {product.name}\n価格:{price.price:,}円"
         )
 
