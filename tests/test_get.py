@@ -7,7 +7,7 @@ def test_get_from_network_unavailable(example_product_button_battery: str):
     with patch("requests.get") as mock_get:
         mock_get.side_effect = ConnectionError
         try:
-            result = get_product(example_product_button_battery)
+            _ = get_product(example_product_button_battery)
             assert False
         except ConnectionError:
             pass

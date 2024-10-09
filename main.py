@@ -41,14 +41,20 @@ async def main():
         if errors:
             for error in errors:
                 await discord_webhook(
-                    {"username": "ヨドボット", "content": f"エラーが発生しました:{error}"},
-                    os.environ["DISCORD_WEBHOOK_URL"]
+                    {
+                        "username": "ヨドボット",
+                        "content": f"エラーが発生しました:{error}",
+                    },
+                    os.environ["DISCORD_WEBHOOK_URL"],
                 )
         for product, last_price in result:
             if last_price is None:
                 price: Optional[int] = None
             else:
                 price: int = last_price.price
+            if product.enable is False:
+                # 通知をキャンセル
+                continue
 
             # 安くなった場合のみ通知する
             if is_price_change(session, product, price):
