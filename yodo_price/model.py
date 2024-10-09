@@ -59,6 +59,7 @@ class Product(SQLModel, table=True):
     image: str
     product_id: str = Field(index=True)
     price_history: List[Price] = Relationship(back_populates="product")
+    enable: bool = Field(default=True) # 2024/10/09 added
 
 
 class LatestPrice(SQLModel, table=False):
