@@ -49,6 +49,9 @@ async def main():
                 price: Optional[int] = None
             else:
                 price: int = last_price.price
+            if product.enable is False:
+                # 通知をキャンセル
+                continue
 
             # 安くなった場合のみ通知する
             if is_price_change(session, product, price):
