@@ -39,7 +39,7 @@ async def add(ctx: Interaction, url: str):
     """Adds two numbers together."""
     await ctx.response.defer()
     if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(
-            os.environ["DISCORD_CHANNEL_ID"]
+        os.environ["DISCORD_CHANNEL_ID"]
     ):
         await ctx.response.send_message("このチャンネルでは使用できません")
         return
@@ -65,7 +65,7 @@ async def add(ctx: Interaction, url: str):
 @bot.tree.command(name="yodo_list", description="登録済み商品一覧")
 async def _list(ctx: Interaction):
     if os.environ["DISCORD_CHANNEL_ID"] and ctx.channel.id != int(
-            os.environ["DISCORD_CHANNEL_ID"]
+        os.environ["DISCORD_CHANNEL_ID"]
     ):
         await ctx.response.send_message("このチャンネルでは使用できません")
         return
@@ -83,8 +83,12 @@ async def _list(ctx: Interaction):
 
 
 @bot.tree.command(name="yodo_log_price")
-async def _log(ctx: Interaction, n: Optional[int] = 10, id: Optional[int] = None,
-               display_mode: str = "normal"):
+async def _log(
+    ctx: Interaction,
+    n: Optional[int] = 10,
+    id: Optional[int] = None,
+    display_mode: str = "normal",
+):
     """
     直近の価格を取得
     :param ctx:
@@ -137,12 +141,16 @@ async def latest_price(ctx: Interaction):
 async def _enable(ctx: Interaction, id: int):
     try:
         with Session(engine) as session:
-            product = session.exec(select(Product).where(Product.id == id)).one_or_none()
+            product = session.exec(
+                select(Product).where(Product.id == id)
+            ).one_or_none()
             if not product:
                 await ctx.response.send_message(f"{id} は登録されていません")
                 return
             if product.enable:
-                await ctx.response.send_message(f"{product.name} は既に有効化されています.そのため何もしません")
+                await ctx.response.send_message(
+                    f"{product.name} は既に有効化されています.そのため何もしません"
+                )
                 return
             product.enable = True
             session.add(product)
@@ -158,7 +166,9 @@ async def _enable(ctx: Interaction, id: int):
 async def _disable(ctx: Interaction, id: int):
     try:
         with Session(engine) as session:
-            product = session.exec(select(Product).where(Product.id == id)).one_or_none()
+            product = session.exec(
+                select(Product).where(Product.id == id)
+            ).one_or_none()
             if not product:
                 await ctx.response.send_message(f"{id} は登録されていません")
                 return

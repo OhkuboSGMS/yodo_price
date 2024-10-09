@@ -1,7 +1,7 @@
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
-from sqlalchemy import pool,MetaData,engine_from_config
+from sqlalchemy import pool, MetaData, engine_from_config
 from sqlmodel import SQLModel
 from alembic import context
 from yodo_price.model import *
@@ -26,6 +26,7 @@ if config.config_file_name is not None:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+
 def combine_metadata(*args):
     m = MetaData()
     for metadata in args:
@@ -35,6 +36,8 @@ def combine_metadata(*args):
 
 
 target_metadata = SQLModel.metadata
+
+
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
@@ -75,8 +78,7 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            url=url,
-            connection=connection, target_metadata=target_metadata
+            url=url, connection=connection, target_metadata=target_metadata
         )
 
         with context.begin_transaction():

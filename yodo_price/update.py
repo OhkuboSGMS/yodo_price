@@ -7,7 +7,9 @@ from yodo_price.get import get_product
 from yodo_price.model import Product, Price, Url
 
 
-def update(url_list: List[str], session: Session) -> Tuple[List[Tuple[str, Product, Price]], List[Exception]]:
+def update(
+    url_list: List[str], session: Session
+) -> Tuple[List[Tuple[str, Product, Price]], List[Exception]]:
     """
     最新情報をDBに追加
     :returns (url,Product,Price),エラーがある場合はエラーのリスト
@@ -22,7 +24,9 @@ def update(url_list: List[str], session: Session) -> Tuple[List[Tuple[str, Produ
             # 初登録の場合はcommitする
             if not product:
                 product = Product(
-                    name=data["name"], image=data["img_url"], product_id=data["product_id"]
+                    name=data["name"],
+                    image=data["img_url"],
+                    product_id=data["product_id"],
                 )
                 session.add(product)
                 session.commit()
