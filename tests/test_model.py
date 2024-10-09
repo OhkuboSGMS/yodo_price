@@ -23,4 +23,4 @@ def test_add_product(session):
     ).one()
 
     assert query_product.name == product.name
-    assert query_product.enable == False
+    assert not query_product.enable

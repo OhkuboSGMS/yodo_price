@@ -1,10 +1,10 @@
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
-from sqlalchemy import pool, MetaData, engine_from_config
-from sqlmodel import SQLModel
+from sqlalchemy import pool, MetaData
+from sqlmodel import SQLModel # noqa
 from alembic import context
-from yodo_price.model import *
+from yodo_price.model import * # noqa
 
 
 # this is the Alembic Config object, which provides
