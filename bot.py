@@ -133,4 +133,44 @@ async def latest_price(ctx: Interaction):
         return
 
 
+@bot.tree.command(name="yodo_enable", description="商品の監視を有効化")
+async def _enable(ctx: Interaction, id: int):
+    try:
+        with Session(engine) as session:
+            product = session.exec(select(Product).where(Product.id == id)).one_or_none()
+            if not product:
+                await ctx.response.send_message(f"{id} は登録されていません")
+                return
+            if product.enable:
+                await ctx.response.send_message(f"{product.name} は既に有効化されています.そのため何もしません")
+                return
+            product.enable = True
+            session.add(product)
+            session.commit()
+            await ctx.response.send_message(f"{product.name} を有効化しました")
+    except Exception as e:
+        logger.exception(e)
+        await ctx.response.send_message(f"Error:enable:{e}")
+        return
+
+
+@bot.tree.command(name="yodo_disable", description="商品の監視を無効化")
+async def _disable(ctx: Interaction, id: int):
+    try:
+        with Session(engine) as session:
+            product = session.exec(select(Product).where(Product.id == id)).one_or_none()
+            if not product:
+                await ctx.response.send_message(f"{id} は登録されていません")
+                return
+
+            product.enable = False
+            session.add(product)
+            session.commit()
+            await ctx.response.send_message(f"{product.name} を無効化しました")
+    except Exception as e:
+        logger.exception(e)
+        await ctx.response.send_message(f"Error:disable:{e}")
+        return
+
+
 bot.run(os.environ["DISCORD_BOT_TOKEN"])
