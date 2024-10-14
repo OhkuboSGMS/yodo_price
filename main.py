@@ -25,7 +25,7 @@ https://zenn.dev/shimakaze_soft/articles/6e5e47851459f5
 async def main():
     engine = create_engine(f"sqlite:///{os.environ['DB_NAME']}")
     SQLModel.metadata.create_all(engine)
-    viewer_url = os.getenv("VIEWER_URL", '')
+    base_viewer_url = os.getenv("VIEWER_URL", '')
     """
     1. Urlテーブルから値段取得対象のURLを取得する
     2. URLから商品情報を取得する
@@ -55,7 +55,7 @@ async def main():
             if product.enable is False:
                 # 通知をキャンセル
                 continue
-            viewer_url = viewer_url + f"/{product.product_id}"
+            viewer_url = base_viewer_url + f"/{product.product_id}"
             # 安くなった場合のみ通知する
             if is_price_change(session, product, price):
                 # 最新価格
