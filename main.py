@@ -62,7 +62,7 @@ async def main():
                 latest_price = get_last_price(session, product)
                 # price -> 直近価格
                 message = (f"価格変化を検知:ID:{product.id} 商品名: {product.name}\nこれまで:{price:,}円,現在:{latest_price:,}円|[link]({get_product_url(product.product_id)})"
-                           f"|[viewer]({viewer_url}")
+                           f"|[viewer]({viewer_url})")
                 await discord_webhook(
                     {"username": "ヨドボット", "content": message},
                     os.environ["DISCORD_WEBHOOK_URL"],
